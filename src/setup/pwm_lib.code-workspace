@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"name": "PWM_Lib",
+			"path": "../.."
+		}
+	],
+	"settings": {}
+}
