@@ -1,18 +1,18 @@
-#include <Arduino.h>
+#include "setup/pwm.h"
+#include <util/delay.h>
 
-// put function declarations here:
-int myFunction(int, int);
+int main(void) {
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
-}
+    servo_init(PWM_TIMER1, PWM_CH_A, SERVO_MG996R);
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
+    while(1) {
+        servo_set_degrees(PWM_TIMER1, PWM_CH_A, 0);    // center
+        _delay_ms(1000);
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+        servo_set_degrees(PWM_TIMER1, PWM_CH_A, 60);   // full right
+        _delay_ms(1000);
+
+        servo_set_degrees(PWM_TIMER1, PWM_CH_A, -60);  // full left
+        _delay_ms(1000);
+    }
 }
