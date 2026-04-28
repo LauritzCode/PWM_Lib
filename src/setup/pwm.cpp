@@ -358,27 +358,45 @@ void servo_init(PWM_Timer timer, PWM_Channel ch, ServoType type) {
 
 void servo_set_ocr(PWM_Timer timer, PWM_Channel ch,  uint16_t ocr) {
 
-    if(ocr > 2000) ocr = 2000;
-    if(ocr < 1000) ocr = 1000;
+    ServoType type = servo_types[timer];
+
+    uint16_t min_ocr = 1000;
+    uint16_t max_ocr = 2000;
+    
+    if(type == SERVO_GENERIC) {
+        min_ocr = 500;
+        max_ocr = 2500;
+    }
+
+    if(ocr > max_ocr) ocr = max_ocr;
+    if(ocr < min_ocr) ocr = min_ocr;
+
 
     pwm_set_ocr(timer, ch, ocr);
 
 }
 
 void servo_set_degrees(PWM_Timer timer, PWM_Channel ch, int8_t degrees) {
-    int8_t max_degrees;
-    ServoType type = servo_types[timer];
-    switch(type) {
-    case SERVO_MG90S:  
-    max_degrees = 90; break;
-    case SERVO_MG996R: 
-    max_degrees = 60; break;
-    default:           
-    max_degrees = 90; break;
-   }
 
-   uint16_t ocr = 1500 + ((int16_t)degrees * 500 / max_degrees);
-   servo_set_ocr(timer, ch, ocr);
+    ServoType type = servo_types[timer];
+
+    int16_t max_degrees;
+    int16_t neutral;
+    int16_t range;
+
+    switch(type) {
+        case SERVO_MG90S:
+            max_degrees = 90; neutral = 1500; range = 500; break;
+        case SERVO_MG996R:
+            max_degrees = 60; neutral = 1500; range = 500; break;
+        case SERVO_GENERIC:
+            max_degrees = 90; neutral = 1500; range = 1000; break;
+        default:
+            max_degrees = 90; neutral = 1500; range = 500; break;
+    }
+
+    int16_t ocr = neutral + ((int32_t)degrees * range / max_degrees);
+    servo_set_ocr(timer, ch, (uint16_t)ocr);
 }
 
 
